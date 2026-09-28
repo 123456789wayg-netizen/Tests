@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蘇老師的數學加法大冒險</title>
+    <style>
+        body { font-family: 'Comic Sans MS', 'Chalkboard SE', 'Microsoft JhengHei', sans-serif; background-color: #FFE5EC; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .game-container { background-color: #FFFFFF; border-radius: 30px; box-shadow: 0 10px 30px rgba(255, 117, 143, 0.3); border: 5px solid #FFB3C6; width: 90%; max-width: 800px; padding: 30px; position: relative; overflow: hidden; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px dashed #FFC2D1; padding-bottom: 15px; margin-bottom: 20px; }
+        .title { color: #FF4D6D; font-size: 28px; margin: 0; font-weight: bold; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        .progress { background-color: #FFB3C6; color: white; padding: 8px 20px; border-radius: 20px; font-size: 18px; font-weight: bold; }
+        .main-content { display: flex; flex-direction: row; align-items: center; gap: 30px; }
+        @media (max-width: 600px) { .main-content { flex-direction: column; } }
+        .teacher-section { display: flex; flex-direction: column; align-items: center; min-width: 220px; }
+        .teacher-svg { width: 180px; height: 220px; }
+        .dialog-box { background-color: #FFF0F5; border: 3px solid #FFC2D1; border-radius: 20px; padding: 15px; margin-top: 15px; position: relative; font-size: 18px; color: #4A4A4A; text-align: center; width: 100%; box-sizing: border-box; font-weight: bold; }
+        .dialog-box::after { content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); border-width: 0 15px 15px; border-style: solid; border-color: transparent transparent #FFF0F5; display: block; width: 0; }
+        .dialog-box::before { content: ''; position: absolute; top: -19px; left: 50%; transform: translateX(-50%); border-width: 0 16px 16px; border-style: solid; border-color: transparent transparent #FFC2D1; display: block; width: 0; z-index: -1; }
+        .quiz-section { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #FFF0F3; border-radius: 25px; padding: 30px; border: 2px solid #FFE3E8; }
+        .formula { font-size: 56px; color: #FF4D6D; font-weight: bold; margin-bottom: 25px; letter-spacing: 2px; }
+        .input-area { display: flex; gap: 15px; width: 100%; justify-content: center; }
+        .answer-input { width: 120px; height: 60px; border-radius: 15px; border: 4px solid #FFB3C6; font-size: 32px; text-align: center; color: #FF4D6D; font-weight: bold; outline: none; transition: all 0.3s; }
+        .answer-input:focus { border-color: #FF4D6D; box-shadow: 0 0 10px rgba(255, 77, 109, 0.3); }
+        .submit-btn { background-color: #FF4D6D; color: white; border: none; border-radius: 15px; padding: 0 30px; font-size: 22px; font-weight: bold; cursor: pointer; transition: all 0.2s; box-shadow: 0 5px 0 #C9184A; }
+        .submit-btn:hover { background-color: #FF758F; }
+        .submit-btn:active { transform: translateY(5px); box-shadow: none; }
+        .result-screen { display: none; text-align: center; padding: 20px; }
+        .result-title { font-size: 36px; color: #FF4D6D; font-weight: bold; margin-bottom: 10px; }
+        .score-text { font-size: 26px; color: #666; margin-bottom: 30px; }
+        .dino-container { margin: 20px 0; animation: bounce 0.6s infinite alternate; }
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+        .restart-btn { background-color: #2A9D8F; color: white; border: none; border-radius: 15px; padding: 12px 40px; font-size: 22px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 0 #1D7066; margin-top: 20px; }
+        .restart-btn:active { transform: translateY(5px); box-shadow: none; }
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div id="game-stage">
+        <div class="header">
+            <h1 class="title">🦄 蘇老師的數學加法冒險</h1>
+            <div class="progress" id="progress-text">第 1 題 / 共 5 題</div>
+        </div>
+        <div class="main-content">
+            <div class="teacher-section">
+                <svg class="teacher-svg" viewBox="0 0 200 240">
+                    <path d="M 40,110 Q 100,20 160,110 Z" fill="#4A3728"/>
+                    <circle cx="100" cy="110" r="55" fill="#FFE5D9"/>
+                    <circle cx="65" cy="125" r="10" fill="#FFB3C6" opacity="0.6"/>
+                    <circle cx="135" cy="125" r="10" fill="#FFB3C6" opacity="0.6"/>
+                    <circle cx="75" cy="110" r="9" fill="#222"/>
+                    <circle cx="73" cy="107" r="3" fill="#FFF"/>
+                    <circle cx="125" cy="110" r="9" fill="#222"/>
+                    <circle cx="123" cy="107" r="3" fill="#FFF"/>
+                    <path d="M 90,130 Q 100,140 110,130" stroke="#FF4D6D" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <path d="M 45,90 Q 100,40 155,90 Q 165,130 155,140 Q 145,100 100,90 Q 55,100 45,140 Q 35,130 45,90 Z" fill="#5C4033"/>
+                    <path d="M 100,45 L 70,30 Q 60,45 80,50 Z" fill="#FF758F"/>
+                    <path d="M 100,45 L 130,30 Q 140,45 120,50 Z" fill="#FF758F"/>
+                    <circle cx="100" cy="45" r="7" fill="#FF4D6D"/>
+                    <path d="M 65,162 L 135,162 L 150,230 L 50,230 Z" fill="#FFB3C6"/>
+                    <path d="M 85,162 L 100,180 L 115,162 Z" fill="#FFF"/>
+                    <circle cx="50" cy="200" r="10" fill="#FFE5D9"/>
+                    <circle cx="150" cy="200" r="10" fill="#FFE5D9"/>
+                </svg>
+                <div class="dialog-box" id="teacher-speak">同學們好！我是蘇老師，我們一起來挑戰 5 道加法題吧！</div>
+            </div>
+            <div class="quiz-section">
+                <div class="formula" id="question-text">25 + 14 = ?</div>
+                <div class="input-area">
+                    <input type="number" id="user-answer" class="answer-input" placeholder="?" autocomplete="off" pattern="\d*">
+                    <button class="submit-btn" id="submit-btn">回答</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="result-stage" class="result-screen">
+        <div class="result-title" id="result-title">太棒了！挑戰完成！</div>
+        <div class="score-text" id="score-text">答對了 0 題 / 共 5 題</div>
+        <div id="dino-box" class="dino-container" style="display: none;">
+            <svg width="180" height="180" viewBox="0 0 100 100">
+                <path d="M 30,70 Q 10,75 15,55 Q 25,60 35,65 Z" fill="#4CAF50"/>
+                <ellipse cx="45" cy="65" rx="20" ry="15" fill="#4CAF50"/>
+                <ellipse cx="48" cy="65" rx="13" ry="10" fill="#8BC34A"/>
+                <rect x="35" y="75" width="6" height="12" rx="3" fill="#388E3C"/>
+                <rect x="50" y="75" width="6" height="12" rx="3" fill="#388E3C"/>
+                <path d="M 45,45 L 75,45 Q 85,45 85,55 Q 85,65 75,65 L 50,65 Z" fill="#4CAF50"/>
+                <circle cx="55" cy="50" r="12" fill="#4CAF50"/>
+                <circle cx="65" cy="46" r="4" fill="#FFF"/>
+                <circle cx="65" cy="46" r="2" fill="#000"/>
+                <polygon points="30,50 34,46 36,52" fill="#FF9800"/>
+                <polygon points="40,40 45,35 48,42" fill="#FF9800"/>
+                <polygon points="54,34 59,28 62,36" fill="#FF9800"/>
+            </svg>
+            <div style="color: #2E7D32; font-weight: bold; font-size: 20px;">哇！召喚出傳說中的全對滿分暴龍了！</div>
+        </div>
+        <button class="restart-btn" id="restart-btn">再玩一次</button>
+    </div>
+</div>
+<script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(type) {
+        if (audioCtx.state === 'suspended') { audioCtx.resume(); }
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        if (type === 'correct') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(220, audioCtx.currentTime); osc.frequency.linearRampToValueAtTime(110, audioCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        } else if (type === 'victory') {
+            osc.type = 'sine'; const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, index) => { osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.1); });
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.6);
+        }
+    }
+    let currentQuestionCount = 0, totalQuestions = 5, correctCount = 0, num1 = 0, num2 = 0, correctAnswer = 0;
+    const correctPraises = ["太厲害了！你答對囉！👍", "好聰明喔！完全正確！✨", "真棒！蘇老師為你鼓掌！👏", "答得太漂亮了！繼續保持！💖"];
+    const wrongEncourages = ["差一點點，再算一下試試看！💪", "沒關係，再接再厲唷！☀️", "別灰心，下一題一定可以答對！🎈"];
+    const gameStage = document.getElementById('game-stage'), resultStage = document.getElementById('result-stage'), progressText = document.getElementById('progress-text'), teacherSpeak = document.getElementById('teacher-speak'), questionText = document.getElementById('question-text'), userAnswerInput = document.getElementById('user-answer'), submitBtn = document.getElementById('submit-btn'), resultTitle = document.getElementById('result-title'), scoreText = document.getElementById('score-text'), dinoBox = document.getElementById('dino-box'), restartBtn = document.getElementById('restart-btn');
+    function generateQuestion() {
+        currentQuestionCount++;
+        if (currentQuestionCount > totalQuestions) { showResults(); return; }
+        num1 = Math.floor(Math.random() * 30) + 1; num2 = Math.floor(Math.random() * 20) + 1; correctAnswer = num1 + num2;
+        progressText.innerText = `第 ${currentQuestionCount} 題 / 共 ${totalQuestions} 題`; questionText.innerText = `${num1} + ${num2} = ?`;
+        userAnswerInput.value = ''; userAnswerInput.focus();
+    }
+    function checkAnswer() {
+        const userAns = parseInt(userAnswerInput.value);
+        if (isNaN(userAns)) { teacherSpeak.innerText = "請先在框框裡填寫你的答案喔！🧐"; return; }
+        if (userAns === correctAnswer) {
+            correctCount++; playSound('correct');
+            teacherSpeak.innerText = correctPraises[Math.floor(Math.random() * correctPraises.length)];
+            submitBtn.disabled = true; setTimeout(() => { submitBtn.disabled = false; generateQuestion(); }, 1200);
+        } else {
+            playSound('wrong');
+            teacherSpeak.innerText = wrongEncourages[Math.floor(Math.random() * wrongEncourages.length)] + ` (正確答案是 ${correctAnswer} 唷)`;
+            submitBtn.disabled = true; setTimeout(() => { submitBtn.disabled = false; generateQuestion(); }, 2000);
+        }
+    }
+    function showResults() {
+        gameStage.style.display = 'none'; resultStage.style.display = 'block';
+        scoreText.innerText = `你在 5 題中答對了 ${correctCount} 題喔！`;
+        if (correctCount === totalQuestions) { resultTitle.innerText = "🎉 一百分！超級大滿分！ 🎉"; dinoBox.style.display = 'block'; setTimeout(() => playSound('victory'), 200); }
+        else { resultTitle.innerText = "👍 太棒了，完成挑戰！"; dinoBox.style.display = 'none'; }
+    }
+    function restartGame() { currentQuestionCount = 0; correctCount = 0; teacherSpeak.innerText = "新挑戰開始囉！這次要拿滿分召喚暴龍喔！🦖"; resultStage.style.display = 'none'; gameStage.style.display = 'block'; generateQuestion(); }
+    submitBtn.addEventListener('click', checkAnswer);
+    userAnswerInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') { checkAnswer(); } });
+    restartBtn.addEventListener('click', restartGame);
+    generateQuestion();
+</script>
+</body>
+</html>
